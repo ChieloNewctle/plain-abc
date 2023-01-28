@@ -1,4 +1,5 @@
 # plain-abc
+
 An ABC implementation without metaclass.
 
 It is a little bit annoying to have metaclass conflict,
@@ -7,6 +8,9 @@ especially when trying to use ABC along with other libraries.
 `plain-abc` provides a simple ABC implementation without metaclass.
 
 ## Solving metaclass conflict without `plain-abc`
+
+Here is an example of metaclass conflict
+and a solution to mix ABCMeta and other metaclasses.
 
 ```python
 from abc import ABC, ABCMeta, abstractmethod
@@ -40,6 +44,8 @@ class Foo(Base, IFoo, metaclass=NewMetaclass):
 ```
 
 ## Usage
+
+But you can also use `plain-abc` to solve the problem.
 
 ```python
 from abc import abstractmethod
