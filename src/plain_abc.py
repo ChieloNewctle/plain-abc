@@ -2,6 +2,7 @@
 An ABC implementation without metaclass
 better compatibility with other libraries
 """
+import sys
 from abc import abstractmethod
 from inspect import signature
 from itertools import dropwhile
@@ -93,6 +94,6 @@ class PlainABC(object):
         if PlainABC not in cls.__bases__:
             uncovered = frozenset(defined.keys()).difference(covered)
             if uncovered:
-                raise MissingImplError(uncovered)
+                raise MissingImplError(tuple(map(defined.get, uncovered)))
 
         return super().__init_subclass__(**kwargs)
