@@ -34,6 +34,21 @@ def test_plain_abc_normal():
         def foo(self, a):
             ...
 
+        @classmethod
+        @abstractmethod
+        def foo_classmethod(cls):
+            ...
+
+        @staticmethod
+        @abstractmethod
+        def foo_staticmethod():
+            ...
+
+        @property
+        @abstractmethod
+        def bar(cls):
+            ...
+
         def hmm(self):
             return self
 
@@ -52,9 +67,24 @@ def test_plain_abc_normal():
         def new_foo(self):
             return self.a + 1
 
+        @classmethod
+        def foo_classmethod(cls):
+            return 9
+
+        @staticmethod
+        def foo_staticmethod():
+            return 8
+
+        @property
+        def bar(cls):
+            return 7
+
     assert Foo(3).foo(4) == 3 + 4
     assert Foo(a=5).new_foo() == 5 + 1
     assert Foo().hmm() == 5
+    assert Foo.foo_classmethod() == 9
+    assert Foo.foo_staticmethod() == 8
+    assert Foo().bar == 7
 
 
 def test_plain_abc_multiple():
@@ -108,7 +138,7 @@ def test_plain_abc_missing_impl_staticmethod():
     class IFoo(PlainABC):
         @staticmethod
         @abstractmethod
-        def foo(cls, a):
+        def foo(a):
             ...
 
     with pytest.raises(MissingImplError):
