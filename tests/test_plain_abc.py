@@ -30,11 +30,6 @@ def test_metaclass_conflict():
 
 def test_plain_abc_normal():
     class IFoo(PlainABC):
-        @classmethod
-        @abstractmethod
-        def create(cls, *args, **kwargs):
-            ...
-
         @abstractmethod
         def foo(self, a):
             ...
@@ -51,28 +46,19 @@ def test_plain_abc_normal():
             return 5
 
     class Foo(ARecord, INewFoo):
-        @classmethod
-        def create(cls, a: int):
-            return cls(a=a)
-
         def foo(self, a):
             return self.a + a
 
         def new_foo(self):
             return self.a + 1
 
-    assert Foo.create(3).foo(4) == 3 + 4
+    assert Foo(3).foo(4) == 3 + 4
     assert Foo(a=5).new_foo() == 5 + 1
     assert Foo().hmm() == 5
 
 
 def test_plain_abc_multiple():
     class IFoo(PlainABC):
-        @classmethod
-        @abstractmethod
-        def create(cls, *args, **kwargs):
-            ...
-
         @abstractmethod
         def foo(self, a):
             ...
@@ -83,17 +69,13 @@ def test_plain_abc_multiple():
             ...
 
     class Foo(ARecord, IFoo, INewFoo):
-        @classmethod
-        def create(cls, a: int):
-            return cls(a=a)
-
         def foo(self, a):
             return self.a + a
 
         def new_foo(self):
             return self.a + 1
 
-    assert Foo.create(3).foo(4) == 3 + 4
+    assert Foo(3).foo(4) == 3 + 4
     assert Foo(a=5).new_foo() == 5 + 1
 
 
@@ -101,6 +83,45 @@ def test_plain_abc_missing_impl():
     class IFoo(PlainABC):
         @abstractmethod
         def foo(self, a):
+            ...
+
+    with pytest.raises(MissingImplError):
+
+        class _(ARecord, IFoo):
+            ...
+
+
+def test_plain_abc_missing_impl_classmethod():
+    class IFoo(PlainABC):
+        @classmethod
+        @abstractmethod
+        def foo(cls, a):
+            ...
+
+    with pytest.raises(MissingImplError):
+
+        class _(ARecord, IFoo):
+            ...
+
+
+def test_plain_abc_missing_impl_staticmethod():
+    class IFoo(PlainABC):
+        @staticmethod
+        @abstractmethod
+        def foo(cls, a):
+            ...
+
+    with pytest.raises(MissingImplError):
+
+        class _(ARecord, IFoo):
+            ...
+
+
+def test_plain_abc_missing_impl_property():
+    class IFoo(PlainABC):
+        @property
+        @abstractmethod
+        def foo(self):
             ...
 
     with pytest.raises(MissingImplError):
