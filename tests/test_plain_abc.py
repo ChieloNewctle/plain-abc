@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 import pytest
+from enum import Enum
+from typing import Literal
 
 from plain_abc import (MissingImplError, NameConflictError, PlainABC,
                        WrongImplError)
@@ -188,3 +190,23 @@ def test_plain_abc_conflict():
 
         class _(ARecord, IFooA, IFooB):
             ...
+
+def test_plain_abc_enum():
+    class IWordSizeEnum(PlainABC):
+        @property
+        @abstractmethod
+        def x32(self) -> Literal["x32"]:
+            ...
+
+        @property
+        @abstractmethod
+        def x64(self) -> Literal["x64"]:
+            ...
+
+    class WordSizeEnum(IWordSizeEnum, Enum):
+        x32 = "x32"
+        x64 = "x64"
+    
+    class WordSize(IWordSizeEnum):
+        x32 = "x32"
+        x64 = "x64"

@@ -76,15 +76,12 @@ class PlainABC(object):
 
     @classmethod
     def _plain_abc_member_signature(cls, name, member):
-        if isinstance(member, property):
-            return property
         if isinstance(member, (classmethod, staticmethod)):
             return inspect.signature(getattr(cls, name))
-        if callable(member):
+        elif callable(member):
             return inspect.signature(member)
-        raise TypeError(
-            f'unknown type of member {name}: {member} to get the signature'
-        )
+        else:
+            return property
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
