@@ -1,9 +1,10 @@
+import sys
 from abc import ABC, abstractmethod
+from enum import Enum
+from typing import Literal
 
 import pytest
-
-from plain_abc import (MissingImplError, NameConflictError, PlainABC,
-                       WrongImplError)
+from plain_abc import MissingImplError, NameConflictError, PlainABC, WrongImplError
 
 
 class _HiddenMetaclass(type):
@@ -24,7 +25,7 @@ def test_metaclass_conflict():
             def foo(self, a):
                 ...
 
-        class _(ARecord, IFoo):   # pyright: ignore
+        class _(ARecord, IFoo):  # pyright: ignore
             ...
 
 
@@ -188,3 +189,45 @@ def test_plain_abc_conflict():
 
         class _(ARecord, IFooA, IFooB):
             ...
+
+
+def test_use_attribute_as_property():
+    class IFoo(PlainABC):
+        @property
+        @abstractmethod
+        def foo(self):
+            ...
+
+    class Foo(ARecord, IFoo):
+        foo = 'foo'  # pyright: ignore
+
+    assert Foo.foo == 'foo'
+
+
+def test_enum():
+    class IWordSizeEnum(PlainABC):
+        @property
+        @abstractmethod
+        def x32(self) -> Literal['x32']:
+            ...
+
+        @property
+        @abstractmethod
+        def x64(self) -> Literal['x64']:
+            ...
+
+    if sys.version_info < (3, 11):
+
+        class WordSizeEnum(IWordSizeEnum, Enum):
+            __abc_concrete_members__ = ('x32', 'x64')
+            x32 = 'x32'  # pyright: ignore
+            x64 = 'x64'  # pyright: ignore
+
+    else:
+
+        class WordSizeEnum(IWordSizeEnum, Enum):
+            x32 = 'x32'  # pyright: ignore
+            x64 = 'x64'  # pyright: ignore
+
+    assert WordSizeEnum.x32.value == 'x32'  # pyright: ignore
+    assert WordSizeEnum.x64.value == 'x64'  # pyright: ignore
