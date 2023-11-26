@@ -12,11 +12,11 @@ if sys.version_info < (3, 8):
 else:
     from importlib.metadata import version
 
-__version__ = version('plain-abc')
+__version__ = version("plain-abc")
 
 
 def is_abstractmember(f) -> bool:
-    return getattr(f, '__isabstractmethod__', False)
+    return getattr(f, "__isabstractmethod__", False)
 
 
 def __sanity_check():
@@ -44,8 +44,8 @@ class NameConflictError(PlainABCError):
         self.current, self.pre_defined = current, pre_defined
         tp, name, _ = current
         message = (
-            f'name conflict in {tp}, '
-            f'abstract member {name} should be defined only once'
+            f"name conflict in {tp}, "
+            f"abstract member {name} should be defined only once"
         )
         super().__init__(message, *args, **kwargs)
 
@@ -54,16 +54,16 @@ class WrongImplError(PlainABCError):
     def __init__(self, current, pre_defined, *args, **kwargs):
         self.current, self.pre_defined = current, pre_defined
         tp, name, _ = current
-        message = f'wrong implementation for member {name} in {tp}'
+        message = f"wrong implementation for member {name} in {tp}"
         super().__init__(message, *args, **kwargs)
 
 
 class MissingImplError(PlainABCError):
     def __init__(self, cls, missing, *args, **kwargs):
         self.cls, self.missing = cls, tuple(sorted(missing))
-        missing_names = ', '.join(self.missing[:3])
-        missing_more = '...' if len(self.missing) > 3 else ''
-        message = f'missing implementation in {cls} for {missing_names}{missing_more}'
+        missing_names = ", ".join(self.missing[:3])
+        missing_more = "..." if len(self.missing) > 3 else ""
+        message = f"missing implementation in {cls} for {missing_names}{missing_more}"
         super().__init__(message, *args, **kwargs)
 
 
@@ -97,7 +97,7 @@ class PlainABC(object):
             name
             for tp in dropwhile(lambda x: x != PlainABC, reversed(cls.__mro__))
             if issubclass(tp, PlainABC)
-            for name in tp.__dict__.get('__abc_concrete_members__', ())
+            for name in tp.__dict__.get("__abc_concrete_members__", ())
         )
 
     @classmethod
