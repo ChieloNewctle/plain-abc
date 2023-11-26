@@ -231,3 +231,28 @@ def test_string_enum():
 
     assert WordSizeEnum.x32.value == "x32"  # pyright: ignore
     assert WordSizeEnum.x64.value == "x64"  # pyright: ignore
+
+
+def test_missing_members_in_string_enum():
+    class IWordSizeEnum(PlainABC):
+        @property
+        @abstractmethod
+        def x32(self) -> Literal["x32"]:
+            ...
+
+        @property
+        @abstractmethod
+        def x64(self) -> Literal["x64"]:
+            ...
+
+    with pytest.raises(MissingImplError):
+        if sys.version_info < (3, 11):
+
+            class WordSizeEnum(IWordSizeEnum, Enum):
+                __abc_concrete_members__ = ("x64",)
+                x64 = "x64"  # pyright: ignore
+
+        else:
+
+            class WordSizeEnum(IWordSizeEnum, Enum):
+                x64 = "x64"  # pyright: ignore
