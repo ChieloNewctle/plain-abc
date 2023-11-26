@@ -29,7 +29,7 @@ def test_metaclass_conflict():
             ...
 
 
-def test_plain_abc_normal():
+def test_normal():
     class IFoo(PlainABC):
         @abstractmethod
         def foo(self, a):
@@ -88,7 +88,7 @@ def test_plain_abc_normal():
     assert Foo().bar == 7
 
 
-def test_plain_abc_multiple():
+def test_multiple():
     class IFoo(PlainABC):
         @abstractmethod
         def foo(self, a):
@@ -110,7 +110,7 @@ def test_plain_abc_multiple():
     assert Foo(a=5).new_foo() == 5 + 1
 
 
-def test_plain_abc_missing_impl():
+def test_missing_impl():
     class IFoo(PlainABC):
         @abstractmethod
         def foo(self, a):
@@ -122,7 +122,7 @@ def test_plain_abc_missing_impl():
             ...
 
 
-def test_plain_abc_missing_impl_classmethod():
+def test_missing_impl_classmethod():
     class IFoo(PlainABC):
         @classmethod
         @abstractmethod
@@ -135,7 +135,7 @@ def test_plain_abc_missing_impl_classmethod():
             ...
 
 
-def test_plain_abc_missing_impl_staticmethod():
+def test_missing_impl_staticmethod():
     class IFoo(PlainABC):
         @staticmethod
         @abstractmethod
@@ -148,7 +148,7 @@ def test_plain_abc_missing_impl_staticmethod():
             ...
 
 
-def test_plain_abc_missing_impl_property():
+def test_missing_impl_property():
     class IFoo(PlainABC):
         @property
         @abstractmethod
@@ -161,7 +161,7 @@ def test_plain_abc_missing_impl_property():
             ...
 
 
-def test_plain_abc_wrong_impl():
+def test_wrong_impl():
     class IFoo(PlainABC):
         @abstractmethod
         def foo(self, a):
@@ -174,7 +174,7 @@ def test_plain_abc_wrong_impl():
                 return a + b
 
 
-def test_plain_abc_conflict():
+def test_conflict():
     class IFooA(PlainABC):
         @abstractmethod
         def foo(self, a):
@@ -199,35 +199,35 @@ def test_use_attribute_as_property():
             ...
 
     class Foo(ARecord, IFoo):
-        foo = 'foo'  # pyright: ignore
+        foo = "foo"  # pyright: ignore
 
-    assert Foo.foo == 'foo'
+    assert Foo.foo == "foo"
 
 
-def test_enum():
+def test_string_enum():
     class IWordSizeEnum(PlainABC):
         @property
         @abstractmethod
-        def x32(self) -> Literal['x32']:
+        def x32(self) -> Literal["x32"]:
             ...
 
         @property
         @abstractmethod
-        def x64(self) -> Literal['x64']:
+        def x64(self) -> Literal["x64"]:
             ...
 
     if sys.version_info < (3, 11):
 
         class WordSizeEnum(IWordSizeEnum, Enum):
-            __abc_concrete_members__ = ('x32', 'x64')
-            x32 = 'x32'  # pyright: ignore
-            x64 = 'x64'  # pyright: ignore
+            __abc_concrete_members__ = ("x32", "x64")
+            x32 = "x32"  # pyright: ignore
+            x64 = "x64"  # pyright: ignore
 
     else:
 
         class WordSizeEnum(IWordSizeEnum, Enum):
-            x32 = 'x32'  # pyright: ignore
-            x64 = 'x64'  # pyright: ignore
+            x32 = "x32"  # pyright: ignore
+            x64 = "x64"  # pyright: ignore
 
-    assert WordSizeEnum.x32.value == 'x32'  # pyright: ignore
-    assert WordSizeEnum.x64.value == 'x64'  # pyright: ignore
+    assert WordSizeEnum.x32.value == "x32"  # pyright: ignore
+    assert WordSizeEnum.x64.value == "x64"  # pyright: ignore
