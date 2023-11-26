@@ -43,7 +43,10 @@ class NameConflictError(PlainABCError):
     def __init__(self, current, pre_defined, *args, **kwargs):
         self.current, self.pre_defined = current, pre_defined
         tp, name, _ = current
-        message = f'name conflict in {tp}, abstract member {name} should be defined only once'
+        message = (
+            f'name conflict in {tp}, '
+            f'abstract member {name} should be defined only once'
+        )
         super().__init__(message, *args, **kwargs)
 
 
@@ -76,18 +79,36 @@ class PlainABC(object):
 
     @classmethod
     def _plain_abc_member_signature(cls, name, member):
+        # in cases where `property` is callable
+        if isinstance(member, property):
+            return property
+
         if isinstance(member, (classmethod, staticmethod)):
             return inspect.signature(getattr(cls, name))
-        elif callable(member):
+
+        if callable(member):
             return inspect.signature(member)
-        else:
-            return property
+
+        return property
+
+    @classmethod
+    def _plain_abc_members_assumed_concrete(cls):
+        return frozenset(
+            name
+            for tp in dropwhile(lambda x: x != PlainABC, reversed(cls.__mro__))
+            if issubclass(tp, PlainABC)
+            for name in tp.__dict__.get('__abc_concrete_members__', ())
+        )
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
         defined, covered = dict(), set()
+        concrete_members = cls._plain_abc_members_assumed_concrete()
 
         for tp, name, attr in cls._plain_abc_members_to_verify():
+            if name in concrete_members:
+                continue
+
             if is_abstractmember(attr):
                 if name in defined:
                     raise NameConflictError((tp, name, attr), defined[name])

@@ -45,7 +45,7 @@ class Foo(Base, IFoo, metaclass=NewMetaclass):
 
 ## Usage
 
-But you can also use `plain-abc` to solve the problem.
+But you can also use `plain-abc` to solve the problem:
 
 ```python
 from abc import abstractmethod
@@ -67,4 +67,22 @@ class IFoo(PlainABC):
 
 class Foo(Base, IFoo):
     def foo(self): ...
+```
+
+To skip signature checking,
+you can add the member names in `__abc_concrete_members__` of a subclass:
+
+```python
+class IEnum(PlainABC):
+    @property
+    @abstractmethod
+    def foo(self) -> str:
+        ...
+
+class Foo(IEnum, Enum):
+    # for python 3.10 or lower
+    __abc_concrete_members__ = ('foo',)
+    foo = 'foo'
+
+assert Foo.foo.value == 'foo'
 ```
