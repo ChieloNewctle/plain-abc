@@ -6,7 +6,7 @@
 
 Another `ABC` implementation without `metaclass`.
 
-It is a little bit annoying to have metaclass conflict,
+It is a little bit annoying to have `metaclass` conflict,
 especially when trying to use ABC along with other libraries.
 
 `plain-abc` provides a simple `ABC` implementation without `metaclass`.
@@ -94,10 +94,10 @@ class Foo(IEnum, Enum):
 assert Foo.foo.value == 'foo'
 ```
 
-## To solve metaclass conflict without `plain-abc`
+## To solve `metaclass` conflict without `plain-abc`
 
-Here is an example of metaclass conflict
-and how to mix ABCMeta and other metaclasses.
+Here is an example of `metaclass` conflict
+and how to mix `ABCMeta` with other `metaclass`es.
 
 ```python
 from abc import ABC, ABCMeta, abstractmethod
