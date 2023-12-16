@@ -62,7 +62,7 @@ jobs:
 
   build:
     name: Build distribution
-    needs: [test]
+    needs: [format, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
