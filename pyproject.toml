@@ -1,7 +1,7 @@
 [project]
 name = "plain-abc"
-version = "0.0.4"
-authors = [{ name = "Chielo Newctle", email = "ChieloNewctle@Yandex.com" }]
+version = "0.1.0"
+authors = [{ name = "Chielo Newctle", email = "ChieloNewctle@gmail.com" }]
 description = "An ABC implementation without metaclass"
 readme = "README.md"
 requires-python = ">=3.8"
