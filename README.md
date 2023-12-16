@@ -49,6 +49,7 @@ But you can also use `plain-abc` to solve the problem:
 
 ```python
 from abc import abstractmethod
+
 from plain_abc import PlainABC
 
 
@@ -69,20 +70,52 @@ class Foo(Base, IFoo):
     def foo(self): ...
 ```
 
+To extend an abstract class **as another abstract class**,
+`PlainABC` is required to be one of the bases:
+
+```python
+from abc import abstractmethod
+
+from plain_abc import PlainABC
+
+
+class IEntity(PlainABC):
+    @abstractmethod
+    def get_id(self) -> str: ...
+
+
+class IProjectile(IEntity, PlainABC):
+    @abstractmethod
+    def get_speed(self) -> float: ...
+
+
+class Arrow(IProjectile):
+    def get_id(self) -> str: ...
+    def get_speed(self) -> float: ...
+```
+
 To skip signature checking,
 you can add the member names in `__abc_concrete_members__` of a subclass:
 
 ```python
+from abc import abstractmethod
+from enum import Enum
+
+from plain_abc import PlainABC
+
+
 class IEnum(PlainABC):
     @property
     @abstractmethod
     def foo(self) -> str:
         ...
 
+
 class Foo(IEnum, Enum):
     # for python 3.10 or lower
     __abc_concrete_members__ = ('foo',)
     foo = 'foo'
+
 
 assert Foo.foo.value == 'foo'
 ```
