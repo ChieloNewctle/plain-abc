@@ -1,46 +1,20 @@
 # plain-abc
 
-An ABC implementation without metaclass.
+[![PyPI version](https://img.shields.io/pypi/v/plain-abc.svg)](https://pypi.org/project/plain-abc/)
+[![License](https://img.shields.io/github/license/ChieloNewctle/plain-abc)](LICENSE)
+[![Build status](https://github.com/ChieloNewctle/plain-abc/actions/workflows/ci.yml/badge.svg)](https://github.com/ChieloNewctle/plain-abc/actions)
+
+Another `ABC` implementation without `metaclass`.
 
 It is a little bit annoying to have metaclass conflict,
 especially when trying to use ABC along with other libraries.
 
-`plain-abc` provides a simple ABC implementation without metaclass.
+`plain-abc` provides a simple `ABC` implementation without `metaclass`.
 
-## Solving metaclass conflict without `plain-abc`
+## Installation
 
-Here is an example of metaclass conflict
-and a solution to mix ABCMeta and other metaclasses.
-
-```python
-from abc import ABC, ABCMeta, abstractmethod
-
-
-class _SomeHiddenMetaclass(type):
-    pass
-
-
-class Base(metaclass=_SomeHiddenMetaclass):
-    pass
-
-
-class IFoo(ABC):
-    @abstractmethod
-    def foo(self): ...
-
-
-# oh no, metaclass conflict!
-# class Foo(Base, IFoo):
-#     def foo(self): ...
-
-
-# create a new metaclass for either IFoo or Foo
-class NewMetaclass(_SomeHiddenMetaclass, ABCMeta):
-    ...
-
-
-class Foo(Base, IFoo, metaclass=NewMetaclass):
-    def foo(self): ...
+```sh
+pip install plain-abc
 ```
 
 ## Usage
@@ -118,4 +92,40 @@ class Foo(IEnum, Enum):
 
 
 assert Foo.foo.value == 'foo'
+```
+
+## To solve metaclass conflict without `plain-abc`
+
+Here is an example of metaclass conflict
+and how to mix ABCMeta and other metaclasses.
+
+```python
+from abc import ABC, ABCMeta, abstractmethod
+
+
+class _SomeHiddenMetaclass(type):
+    ...
+
+
+class Base(metaclass=_SomeHiddenMetaclass):
+    ...
+
+
+class IFoo(ABC):
+    @abstractmethod
+    def foo(self): ...
+
+
+# oh no, metaclass conflict!
+# class Foo(Base, IFoo):
+#     def foo(self): ...
+
+
+# create a new metaclass to solve the conflict
+class NewMetaclass(_SomeHiddenMetaclass, ABCMeta):
+    ...
+
+
+class Foo(Base, IFoo, metaclass=NewMetaclass):
+    def foo(self): ...
 ```
