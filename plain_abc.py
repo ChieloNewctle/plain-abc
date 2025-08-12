@@ -2,6 +2,7 @@
 An ABC implementation without metaclass
 better compatibility with other libraries
 """
+
 import inspect
 from abc import abstractmethod
 from importlib.metadata import version
@@ -16,13 +17,11 @@ def is_abstractmember(f) -> bool:
 
 def __sanity_check():
     @abstractmethod
-    def f():
-        ...
+    def f(): ...
 
     assert is_abstractmember(f)
 
-    def g():
-        ...
+    def g(): ...
 
     assert not is_abstractmember(g)
 

@@ -22,8 +22,7 @@ def test_metaclass_conflict():
 
         class IFoo(ABC):
             @abstractmethod
-            def foo(self, a):
-                ...
+            def foo(self, a): ...
 
         class _(ARecord, IFoo):  # pyright: ignore
             ...
@@ -32,31 +31,26 @@ def test_metaclass_conflict():
 def test_normal():
     class IFoo(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
         @classmethod
         @abstractmethod
-        def foo_classmethod(cls):
-            ...
+        def foo_classmethod(cls): ...
 
         @staticmethod
         @abstractmethod
-        def foo_staticmethod():
-            ...
+        def foo_staticmethod(): ...
 
         @property
         @abstractmethod
-        def bar(cls):
-            ...
+        def bar(cls): ...
 
         def hmm(self):
             return self
 
     class INewFoo(IFoo, PlainABC):
         @abstractmethod
-        def new_foo(self):
-            ...
+        def new_foo(self): ...
 
         def hmm(self):
             return 5
@@ -91,13 +85,11 @@ def test_normal():
 def test_multiple():
     class IFoo(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
     class INewFoo(PlainABC):
         @abstractmethod
-        def new_foo(self):
-            ...
+        def new_foo(self): ...
 
     class Foo(ARecord, IFoo, INewFoo):
         def foo(self, a):
@@ -113,59 +105,50 @@ def test_multiple():
 def test_missing_impl():
     class IFoo(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
     with pytest.raises(MissingImplError):
 
-        class _(ARecord, IFoo):
-            ...
+        class _(ARecord, IFoo): ...
 
 
 def test_missing_impl_classmethod():
     class IFoo(PlainABC):
         @classmethod
         @abstractmethod
-        def foo(cls, a):
-            ...
+        def foo(cls, a): ...
 
     with pytest.raises(MissingImplError):
 
-        class _(ARecord, IFoo):
-            ...
+        class _(ARecord, IFoo): ...
 
 
 def test_missing_impl_staticmethod():
     class IFoo(PlainABC):
         @staticmethod
         @abstractmethod
-        def foo(a):
-            ...
+        def foo(a): ...
 
     with pytest.raises(MissingImplError):
 
-        class _(ARecord, IFoo):
-            ...
+        class _(ARecord, IFoo): ...
 
 
 def test_missing_impl_property():
     class IFoo(PlainABC):
         @property
         @abstractmethod
-        def foo(self):
-            ...
+        def foo(self): ...
 
     with pytest.raises(MissingImplError):
 
-        class _(ARecord, IFoo):
-            ...
+        class _(ARecord, IFoo): ...
 
 
 def test_wrong_impl():
     class IFoo(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
     with pytest.raises(WrongImplError):
 
@@ -177,26 +160,22 @@ def test_wrong_impl():
 def test_conflict():
     class IFooA(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
     class IFooB(PlainABC):
         @abstractmethod
-        def foo(self, a):
-            ...
+        def foo(self, a): ...
 
     with pytest.raises(NameConflictError):
 
-        class _(ARecord, IFooA, IFooB):
-            ...
+        class _(ARecord, IFooA, IFooB): ...
 
 
 def test_use_attribute_as_property():
     class IFoo(PlainABC):
         @property
         @abstractmethod
-        def foo(self):
-            ...
+        def foo(self): ...
 
     class Foo(ARecord, IFoo):
         foo = "foo"  # pyright: ignore
@@ -208,13 +187,11 @@ def test_string_enum():
     class IWordSizeEnum(PlainABC):
         @property
         @abstractmethod
-        def x32(self) -> Literal["x32"]:
-            ...
+        def x32(self) -> Literal["x32"]: ...
 
         @property
         @abstractmethod
-        def x64(self) -> Literal["x64"]:
-            ...
+        def x64(self) -> Literal["x64"]: ...
 
     if sys.version_info < (3, 11):
 
@@ -237,13 +214,11 @@ def test_missing_members_in_string_enum():
     class IWordSizeEnum(PlainABC):
         @property
         @abstractmethod
-        def x32(self) -> Literal["x32"]:
-            ...
+        def x32(self) -> Literal["x32"]: ...
 
         @property
         @abstractmethod
-        def x64(self) -> Literal["x64"]:
-            ...
+        def x64(self) -> Literal["x64"]: ...
 
     with pytest.raises(MissingImplError):
         if sys.version_info < (3, 11):
