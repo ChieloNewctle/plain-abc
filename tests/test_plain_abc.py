@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Literal
 
 import pytest
+
 from plain_abc import MissingImplError, NameConflictError, PlainABC, WrongImplError
 
 
