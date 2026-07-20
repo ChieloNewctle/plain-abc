@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = [{ name = "Chielo Newctle", email = "ChieloNewctle@gmail.com" }]
 description = "An ABC implementation without metaclass"
 readme = "README.md"
-requires-python = ">=3.8"
-license = { file = "LICENSE" }
+requires-python = ">=3.10"
+license = "MIT"
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
