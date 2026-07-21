@@ -13,15 +13,14 @@ permissions:
   contents: read
 
 jobs:
-  format:
-    name: Check Python format
+  style:
+    name: Style
     runs-on: ubuntu-latest
     steps:
       - &checkout
         name: Checkout repository
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           persist-credentials: false
       - &setup-py
         name: Set up Python
@@ -36,7 +35,7 @@ jobs:
         run: black --check --diff --target-version py314 .
 
   tests:
-    name: Run tests
+    name: Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -49,17 +48,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install locally
         run: pip install -e ".[tests]"
-      - name: Install additional dependencies
-        run: pip install pytest-md pytest-emoji sentencepiece
-      - uses: pavelzw/pytest-action@v2
-        with:
-          emoji: false
-          verbose: true
-          job-summary: true
+      - name: Install dependencies
+        run: pip install pytest-md-report
+      - name: Pytest
+        run: pytest --md-report --md-report-flavor gfm --md-report-output $GITHUB_STEP_SUMMARY
 
   build:
     name: Build distribution
-    needs: [format, tests]
+    needs: [style, tests]
     runs-on: ubuntu-latest
     steps:
       - *checkout
@@ -72,7 +68,25 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: python-package-distributions
-          path: dist/
+          path: dist
+
+  dependabot:
+    name: Dependabot auto-merge
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+    needs: [style, tests, build]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+      actions: write
+    steps:
+      - name: Approve and merge
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --squash --auto "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     name: Publish to PyPI
@@ -108,23 +122,3 @@ jobs:
           gh release upload
           '${{ github.ref_name }}' dist/**
           --repo '${{ github.repository }}'
-
-  dependabot:
-    name: Dependabot Auto-merge
-    if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
-    needs: [tests, format, build]
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
-    steps:
-      - id: metadata
-        uses: dependabot/fetch-metadata@v3
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --squash --auto "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
